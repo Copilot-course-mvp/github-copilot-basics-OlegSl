@@ -11,13 +11,13 @@ def parse_scoreboard(raw: str) -> dict[str, int]:
 
     parts = raw.split(",")
     for part in parts:
-        name, score = part.split(":")
-        name = name.lower()
-        value = int(score)
-        if name in board:
+        try:
+            name, score = part.split(":")
+            name = name.lower()
+            value = int(score)
             board[name] = value
-        else:
-            board[name] = value
+        except ValueError:
+            continue
     return board
 
 
@@ -26,4 +26,9 @@ def top_player(board: dict[str, int]) -> tuple[str, int] | None:
 
     Keep this deterministic by sorting names alphabetically when scores tie.
     """
-    raise NotImplementedError("Implement using Copilot /generate")
+    if not board:
+        return None
+    max_score = max(board.values())
+    candidates = [name for name, score in board.items() if score == max_score]
+    top_name = min(candidates)
+    return (top_name, max_score)
